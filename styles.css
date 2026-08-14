@@ -1,0 +1,1638 @@
+/* ==========================================================================
+   Positivus — лендінг агенції цифрового маркетингу
+   Стилі за макетом Figma. Чистий CSS: без препроцесорів, фреймворків
+   і без жодного рядка JavaScript.
+
+   Файл читається зверху вниз:
+     1. Змінні         — усі кольори, відступи й розміри з макета
+     2. Скидання й база
+     3. Дрібні цеглинки — кнопка, мітка, картка, посилання зі стрілкою
+     4. Секції          — у тому ж порядку, що й на сторінці
+     5. Адаптивність    — усі медіазапити зібрані в кінці
+   ========================================================================== */
+
+/* ==========================================================================
+   1. ЗМІННІ
+   ========================================================================== */
+
+:root {
+  /* --- Кольори з макета (сторінка Style) --- */
+  --color-green: #b9ff66; /* акцент */
+  --color-dark: #191a23; /* текст і темні блоки */
+  --color-grey: #f3f3f3; /* світлі картки */
+  --color-white: #ffffff;
+  --color-muted: #898989; /* приглушений текст */
+  --color-dark-soft: #292a32; /* блок передплати в підвалі — світліший за тло */
+
+  /* --- Типографіка --- */
+  /*
+    Space Grotesk із макета НЕ МАЄ кирилиці. Текст на сторінці англійський,
+    тож усе малюється ним. Onest іде другим як страховка: браузер підбирає
+    шрифт ДЛЯ КОЖНОГО ГЛІФА окремо, тож якщо перекласти сторінку, кирилиця
+    дістанеться Onest, а не системному шрифту навмання.
+    Порядок у цьому рядку і є вся логіка.
+  */
+  --font: "Space Grotesk", "Onest", system-ui, -apple-system, sans-serif;
+
+  --text-h1: 60px;
+  --text-h2: 40px;
+  --text-h3: 30px;
+  --text-body: 20px;
+  --text-small: 18px;
+
+  /* --- Відступи --- */
+  --space-xs: 10px;
+  --space-sm: 20px;
+  --space-md: 35px;
+  --space-lg: 50px;
+  --space-xl: 70px;
+  --space-section: 140px; /* між великими секціями */
+
+  /* --- Геометрія --- */
+  --radius-card: 45px;
+  --radius-button: 14px;
+  --radius-label: 7px;
+  /*
+    У макеті контент займає 1240px (сторінка 1440 мінус поля по 100).
+    Але box-sizing: border-box означає, що padding входить у max-width,
+    тож 1240 + падінги по 20 дали б контент 1200 — усі картки на 20px
+    вужчі за макет. Тому max-width = 1240 + 2×20 = 1280.
+  */
+  --container: 1280px;
+  --border: 1px solid var(--color-dark);
+  /* Характерна «підкладка» під картками з макета — не розмита тінь, а зсув. */
+  --shadow-card: 0 5px 0 0 var(--color-dark);
+
+  --transition: 0.2s ease;
+}
+
+/* ==========================================================================
+   2. СКИДАННЯ Й БАЗА
+   ========================================================================== */
+
+/*
+  box-sizing: border-box означає, що padding і border входять у задану
+  ширину. Без нього картка шириною 600px із padding 50px займає насправді
+  700px і ламає сітку.
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /*
+    Плавне прокручування для якірних посилань у меню.
+    prefers-reduced-motion — не формальність: у частини людей різкий рух
+    на екрані викликає нудоту, і система про це повідомляє.
+    Тому анімації вмикаються лише тим, хто їх не вимкнув.
+  */
+  scroll-behavior: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--color-white);
+  color: var(--color-dark);
+  font-family: var(--font);
+  /* Розміри в rem, а не в px: вони поважають налаштування шрифту в браузері. */
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.4; /* не менше 1.4 для основного тексту — інакше важко читати */
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 500; /* Space Grotesk Medium — накреслення заголовків у макеті */
+  line-height: 1.1;
+}
+
+p {
+  margin: 0;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/*
+  Текст, який бачить лише читалка з екрана. display: none так не працює —
+  він ховає елемент і від читалки теж.
+*/
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
+  Фокус видно завжди. Прибирати обведення не можна: без нього
+  сторінкою неможливо користуватися з клавіатури.
+  :focus-visible з'являється при Tab і не з'являється при кліку мишею.
+*/
+:focus-visible {
+  outline: 3px solid var(--color-dark);
+  outline-offset: 3px;
+}
+
+/*
+  На темних поверхнях (підвал, картки card--dark, секція «Кейси») темна
+  обводка зливається з тлом — контраст 1:1, фокус для клавіатури зникає.
+  Тут та сама товщина й відступ, лише світлий колір.
+*/
+.footer :focus-visible,
+.cases :focus-visible,
+.card--dark :focus-visible {
+  outline-color: var(--color-white);
+}
+
+/* Посилання «перейти до вмісту» — видно лише коли воно у фокусі. */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 20px;
+  z-index: 100;
+  padding: 12px 20px;
+  background: var(--color-green);
+  border-radius: var(--radius-button);
+  text-decoration: none;
+  transition: top var(--transition);
+}
+
+.skip-link:focus {
+  top: 20px;
+}
+
+/* ==========================================================================
+   3. ЦЕГЛИНКИ
+   ========================================================================== */
+
+/* --- Кнопка --- */
+
+.button {
+  display: inline-block;
+  padding: var(--space-sm) var(--space-md);
+  border: var(--border);
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--color-dark);
+  font-family: inherit;
+  font-size: var(--text-body);
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  /* Переходи на кольорах — саме на них, а не на `all`: `all` анімує й те,
+     що анімувати не варто, і сповільнює сторінку. */
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+.button--primary {
+  background: var(--color-dark);
+  color: var(--color-white);
+}
+
+.button--primary:hover {
+  background: var(--color-green);
+  color: var(--color-dark);
+}
+
+.button--outline:hover {
+  background: var(--color-dark);
+  color: var(--color-white);
+}
+
+.button--green {
+  background: var(--color-green);
+  color: var(--color-dark);
+  border-color: var(--color-green);
+}
+
+.button--green:hover {
+  background: var(--color-white);
+  border-color: var(--color-white);
+}
+
+.button--block {
+  display: block;
+  width: 100%;
+}
+
+/* --- Мітка: текст на зеленій плашці --- */
+
+.label {
+  display: inline-block;
+  padding: 0 var(--radius-label);
+  background: var(--color-green);
+  /*
+    Колір тексту задано ЯВНО, а не успадковано. Інакше на темній картці
+    чи в підвалі плашка діставала б білий колір від батька — і білий текст
+    на світло-зеленому тлі дав би контраст 1,2:1, тобто нечитабельний.
+    Плашка завжди світла, тож і текст на ній завжди темний.
+  */
+  color: var(--color-dark);
+  border-radius: var(--radius-label);
+  font-size: var(--text-h2);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* На темній картці плашка світла, щоб текст лишався читабельним. */
+.label--light {
+  background: var(--color-white);
+}
+
+/* --- Картка --- */
+
+.card {
+  padding: var(--space-lg);
+  background: var(--color-grey);
+  border: var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.card--green {
+  background: var(--color-green);
+}
+
+.card--dark {
+  background: var(--color-dark);
+  color: var(--color-white);
+}
+
+/* --- Посилання зі стрілкою --- */
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  font-size: var(--text-body);
+  text-decoration: none;
+}
+
+.link-arrow__icon {
+  display: grid;
+  place-items: center;
+  width: 41px;
+  height: 41px;
+  flex-shrink: 0;
+  background: var(--color-dark);
+  border-radius: 50%;
+  color: var(--color-green);
+  font-size: 20px;
+  line-height: 1;
+  transition: transform var(--transition);
+}
+
+.link-arrow--light .link-arrow__icon {
+  background: var(--color-white);
+  color: var(--color-dark);
+}
+
+/*
+  Варіант із макета для секції «Кейси»: зелений текст і зелена стрілка
+  без кружечка. Тут стрілка йде ПІСЛЯ тексту, тому й у розмітці вона
+  стоїть другою — порядок читання має збігатися з порядком на екрані.
+*/
+.link-arrow--green {
+  color: var(--color-green);
+  gap: 12px;
+}
+
+.link-arrow--green .link-arrow__icon {
+  width: auto;
+  height: auto;
+  background: none;
+  color: var(--color-green);
+  font-size: 24px;
+}
+
+/* Стрілка трохи «виїжджає» під курсором — дрібниця, яку помічають. */
+.link-arrow:hover .link-arrow__icon {
+  transform: translate(3px, -3px);
+}
+
+/* --- Заголовок секції --- */
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 40px; /* у макеті між плашкою й підзаголовком рівно 40px */
+  margin-bottom: 80px; /* і 80px до вмісту секції */
+}
+
+.section-head__title {
+  flex-shrink: 0;
+  font-size: var(--text-h2);
+}
+
+.section-head__text {
+  max-width: 580px; /* ширина підзаголовка в макеті */
+  font-size: var(--text-small);
+}
+
+/* --- Секція --- */
+
+.section {
+  margin-bottom: var(--space-section);
+}
+
+/* ==========================================================================
+   4. СЕКЦІЇ
+   ========================================================================== */
+
+/* --- Шапка --- */
+
+.site-header {
+  /*
+    sticky прикріплює шапку до верху при прокручуванні.
+    z-index обов'язковий: без нього картки нижче проходили б ПОВЕРХ шапки,
+    бо в потоці вони йдуть пізніше.
+  */
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  padding: 20px 0;
+}
+
+/*
+  Розмиття винесено в псевдоелемент, і це не косметика.
+  backdrop-filter (як і filter або transform) робить елемент
+  «containing block» для всіх нащадків із position: fixed. Поки він стояв
+  на самій .site-header, шухляда меню всередині шапки рахувала свої
+  top/right/bottom ВІД ШАПКИ, а не від вікна — і виходила смужка
+  заввишки в шапку замість меню на весь екран.
+
+  На ::before такого ефекту немає: шухляда йому не нащадок.
+  z-index: -1 кладе підкладку під вміст шапки, але не глибше —
+  z-index: 20 на самій шапці замикає контекст накладання.
+*/
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  height: 24px;
+}
+
+@media screen and (min-width: 998px) {
+  .logo {
+    height: 36px;
+  }
+}
+
+.logo__mark {
+  width: auto;
+  height: 100%;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.logo--light {
+  height: 29px;
+  color: var(--color-white);
+}
+
+.site-nav {
+  display: flex;
+}
+
+.site-nav__list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 40px;
+}
+
+.site-nav__link {
+  text-decoration: none;
+  /*
+    Підкреслення з'являється знизу через псевдоелемент, а не через
+    text-decoration: так його можна анімувати від нуля до повної ширини.
+  */
+  position: relative;
+}
+
+.site-nav__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -4px;
+  height: 2px;
+  background: var(--color-dark);
+  transition: right var(--transition);
+}
+
+.site-nav__link:hover::after {
+  right: 0;
+}
+
+/* --- Бургер-меню: стан за замовчуванням (широкий екран) --- */
+
+/*
+  Чекбокс ховаємо так само, як .visually-hidden, а не через display: none.
+  display: none прибрав би його і з клавіатури, і з читалки — меню
+  перестало б відкриватися пробілом. Обведення фокуса перекидаємо
+  на видиму кнопку (див. медіазапит нижче).
+*/
+.burger-menu__checkbox {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* На широкому екрані меню звичайне, тож усі три керівні елементи зайві. */
+.burger-menu__button,
+.burger-menu__overlay,
+.burger-menu__close {
+  display: none;
+}
+
+/*
+  Якірні посилання прокручують секцію під самий верх — і вона ховається
+  за липкою шапкою. scroll-margin-top відсуває точку зупинки на висоту шапки.
+  Це та дрібниця, через яку меню «начебто працює, але не туди».
+*/
+:target {
+  /*
+    Значення має бути НЕ МЕНШЕ за реальну висоту шапки, інакше заголовок
+    секції все одно ховається під нею. Шапка тут ~110px: падінг 20 + кнопка
+    меню 70 + падінг 20. Тож 150px дає ще й повітря зверху.
+  */
+  scroll-margin-top: 150px;
+}
+
+/* --- Титульний екран --- */
+
+.hero__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+}
+
+.hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  max-width: 531px; /* ширина текстової колонки в макеті */
+}
+
+.hero__title {
+  font-size: var(--text-h1);
+}
+
+.hero__lead {
+  max-width: 498px;
+}
+
+/*
+  Ілюстрація підключена як <img src="hero.svg">. SVG без явних width/height
+  у розмітці дістає стандартні 300×150 — і займає куток замість половини
+  екрана. Ширину задає обгортка, висоту браузер бере з пропорцій viewBox.
+*/
+.hero__art {
+  flex-shrink: 1;
+  width: 100%;
+  max-width: 600px;
+}
+
+.hero__art img {
+  width: 100%;
+  height: auto;
+}
+
+/* --- Логотипи клієнтів --- */
+
+.logos__list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: var(--space-md);
+}
+
+.logos__item {
+  min-width: 80px;
+  color: var(--color-muted);
+  flex: 0 1 124px;
+  /*
+    У макеті логотипи знебарвлені. Замість шести окремих сірих копій —
+    grayscale(1) на кольорових оригіналах: один рядок замість шести файлів.
+  */
+  filter: grayscale(1);
+}
+
+/* --- Послуги --- */
+
+.services {
+  display: grid;
+  /*
+    Дві колонки на десктопі. minmax(0, 1fr) замість просто 1fr:
+    інакше довге слово всередині картки не дає колонці стиснутися.
+  */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
+}
+
+.service {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-height: 310px;
+  overflow: hidden;
+}
+
+.service__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  height: 100%;
+}
+
+.service__title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: var(--text-h3);
+}
+
+/*
+  Ілюстрації послуг — PNG з макета (assets/service-1…6.png). Ширина
+  фіксована, висота auto: пропорції картинки задає сам файл, і достатньо
+  одного розміру, щоб усі шість карток вишикувалися однаково.
+  flex-shrink: 0 не дає ілюстрації стиснутися, коли заголовок довгий.
+*/
+.service__art {
+  flex-shrink: 0;
+  width: 210px;
+  height: auto;
+}
+
+/* --- Заклик до дії --- */
+
+.cta {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding: 60px;
+  background: var(--color-grey);
+  border-radius: var(--radius-card);
+}
+
+.cta__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  max-width: 500px;
+}
+
+.cta__title {
+  font-size: var(--text-h3);
+}
+
+.cta__button {
+  position: relative;
+  z-index: 1;
+}
+
+.cta__art {
+  position: absolute;
+  flex-shrink: 0;
+  width: 200px;
+  bottom: -20px;
+  right: 0;
+  height: 50%;
+}
+
+@media (min-width: 992px) {
+  .cta__art {
+    bottom: initial;
+    top: -20px;
+    right: 7%;
+    height: calc(100% + 40px);
+  }
+}
+
+.cta__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+/* --- Кейси --- */
+
+.cases {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 64px;
+  padding: 70px 60px;
+  background: var(--color-dark);
+  border-radius: var(--radius-card);
+  color: var(--color-white);
+}
+
+.case {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-md);
+  font-size: var(--text-small);
+}
+
+/*
+  Роздільники між кейсами — не окремі елементи в розмітці, а межа
+  зліва у другого й третього. Порожній <div> заради лінії — це розмітка,
+  що описує вигляд, а не зміст.
+*/
+.case + .case {
+  padding-left: 64px;
+  border-left: 1px solid var(--color-white);
+}
+
+/* --- Процес --- */
+
+.process {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.step {
+  padding: 41px 60px;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+/*
+  <summary> за замовчуванням має власний трикутник-маркер.
+  Прибираємо його двома рядками (другий — для Safari) і малюємо свій.
+*/
+.step__head {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.step__head::-webkit-details-marker {
+  display: none;
+}
+
+.step__number {
+  font-size: var(--text-h1);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.step__title {
+  flex: 1;
+  font-size: var(--text-h3);
+  font-weight: 500;
+}
+
+/* Кружечок із плюсом. Плюс — дві смужки через градієнт, без зайвих елементів. */
+.step__toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 58px;
+  height: 58px;
+  background: var(--color-grey);
+  border: var(--border);
+  border-radius: 50%;
+}
+
+.step__toggle::before,
+.step__toggle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 3px;
+  background: var(--color-dark);
+  transform: translate(-50%, -50%);
+  transition: transform var(--transition);
+}
+
+.step__toggle::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/*
+  Коли <details> відкрито, браузер сам ставить атрибут open — і CSS може
+  на нього реагувати. Вертикальна смужка плюса повертається й зникає:
+  плюс стає мінусом.
+*/
+.step[open] {
+  background-color: var(--color-green);
+  color: var(--color-dark);
+  border-color: var(--color-green);
+}
+
+.step[open] .step__toggle {
+  background: var(--color-white);
+}
+
+.step[open] .step__toggle::after {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.step__text {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: var(--border);
+  font-size: var(--text-small);
+}
+
+/*
+  Поява тексту при розгортанні. Анімація вмикається лише тим,
+  хто не просив зменшити рух.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  .step[open] .step__text {
+    animation: step-reveal 0.25s ease-out;
+  }
+}
+
+@keyframes step-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Команда --- */
+
+.team {
+  display: grid;
+  /*
+    min(330px, 100%), а не просто 330px: мінімум у minmax() —
+    це ЖОРСТКИЙ мінімум, колонка не звужується нижче за нього. На екрані
+    320px картка лишалася завширшки 330px і тягла за собою горизонтальну
+    прокрутку всієї сторінки. min() дозволяє їй впасти до ширини колонки.
+  */
+  grid-template-columns: repeat(auto-fit, minmax(min(330px, 100%), 1fr));
+  gap: 40px;
+}
+
+.person {
+  position: relative; /* точка відліку для стрілки в куті */
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 40px 35px;
+  background: var(--color-white);
+}
+
+/*
+  Іконка LinkedIn у куті картки — це посилання на профіль, а не прикраса.
+  Тому вона живе в розмітці як <a> з aria-label, а не в CSS: тексту в ній
+  немає, і без підпису читалка сказала б лише «посилання».
+*/
+.person__social {
+  position: absolute;
+  top: 40px;
+  right: 35px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: var(--color-dark);
+  border-radius: 50%;
+  transition: transform var(--transition);
+}
+
+/*
+  Сам знак «in» малюється в CSS, а не лежить шість разів у розмітці.
+  Підпис для читалки дає aria-label на посиланні — він перекриває цей
+  текст, тож «ін» вголос ніхто не почує.
+*/
+.person__social::before {
+  content: "in";
+  color: var(--color-green);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.person__social:hover {
+  transform: translateY(-2px);
+}
+
+.person__head {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  /* Місце під стрілку в куті, щоб довге ім'я не налазило на неї. */
+  padding-right: 44px;
+}
+
+/*
+  Фото в макеті вирізане не квадратом і не колом, а фігурою-«квіткою»,
+  та ще й зі зсунутою темною копією позаду. У розмітці це один порожній div:
+  обидві частини дає CSS.
+
+  Обгортка задає розмір (98×98 — як у макеті) і слугує точкою відліку
+  для темної копії в ::after.
+*/
+.person__photo-wrapper {
+  display: grid;
+  position: relative;
+  place-items: center;
+  width: 98px;
+  height: 98px;
+  flex-shrink: 0;
+}
+
+/*
+  Саме фото. mask-image бере форму з cross.svg: там, де у файлі є фігура,
+  фон видно, решта обрізається. Прикріплювати картинку через background,
+  а не через <img>, тут доречно: фото — оформлення картки, а не її зміст,
+  тож підпису в нього немає й у розмітці йому нічого робити.
+
+  z-index: 1 підіймає фото над темною копією в ::after.
+*/
+.person__photo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  -webkit-mask-image: url(assets/cross.svg);
+  mask-image: url(assets/cross.svg);
+  mask-repeat: no-repeat;
+  /*
+    mask-size обов'язковий. Без нього маска малюється у власному розмірі
+    з файла (98×98) — і щойно елемент стає меншим, фігура не зменшується,
+    а ОБРІЗАЄТЬСЯ: замість «квітки» лишається її кутик. На телефоні фото
+    72px, тому це видно відразу.
+  */
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  z-index: 1;
+}
+
+/*
+  Шість правил замість шести класів у розмітці: :nth-child бере картку
+  за її порядком, тож підставити своє фото — це поміняти один url.
+*/
+
+.person:nth-child(1) .person__photo {
+  background: url(assets/p1.png) 50% / cover no-repeat;
+}
+
+.person:nth-child(2) .person__photo {
+  background: url(assets/p2.png) 50% / cover no-repeat;
+}
+
+.person:nth-child(3) .person__photo {
+  background: url(assets/p3.png) 50% / cover no-repeat;
+}
+
+.person:nth-child(4) .person__photo {
+  background: url(assets/p4.png) 50% / cover no-repeat;
+}
+
+.person:nth-child(5) .person__photo {
+  background: url(assets/p5.png) 50% / cover no-repeat;
+}
+
+.person:nth-child(6) .person__photo {
+  background: url(assets/p6.png) 50% / cover no-repeat;
+}
+
+/*
+  Та сама фігура, тільки темна й зсунута на кілька пікселів — характерна
+  «підкладка» з макета. Окремого елемента в розмітці для неї немає: це
+  ::after обгортки, а фото лежить над ним завдяки z-index.
+*/
+.person__photo-wrapper::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  right: -8px;
+  width: 100%;
+  height: 100%;
+  background-image: url(assets/cross.svg);
+  /* Та сама причина, що й у mask-size вище: інакше фігура обрізається. */
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.person__name {
+  font-size: 20px;
+}
+
+.person__role {
+  font-size: var(--text-small);
+}
+
+.person__bio {
+  padding-top: 28px;
+  border-top: var(--border);
+  font-size: var(--text-small);
+}
+
+.team__more {
+  margin-top: var(--space-md);
+  text-align: right;
+}
+
+/* --- Контакти --- */
+
+.contact {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: 60px 100px;
+  background: var(--color-grey);
+  border-radius: var(--radius-card);
+  /* Ілюстрація зсунута за правий край — усе, що виходить за картку, ріжеться. */
+  overflow: hidden;
+}
+
+.contact__form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 100%;
+  max-width: 556px;
+}
+
+.contact__purpose {
+  display: flex;
+  flex-wrap: wrap; /* на вузькому екрані два варіанти стають один під одним */
+  gap: 20px 35px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  /*
+    min-width: 0 знімає особливу поведінку fieldset: за замовчуванням він
+    не вміє стискатися вужче за свій вміст і вилазить за екран.
+  */
+  min-width: 0;
+}
+
+.contact__art {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translateX(50%);
+  height: 100%;
+  width: auto;
+}
+
+.contact__legend {
+  /* legend читає читалка; візуально його заміняють самі підписи полів. */
+  padding: 0;
+  font-size: var(--text-small);
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/*
+  Стилізований, але СПРАВЖНІЙ input[type=radio]: він і клавіатурою
+  керується, і читалка каже «перемикач, вибрано». Намальований div
+  із кліком не вміє ні того, ні іншого.
+*/
+.radio input {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  background: var(--color-white);
+  border: var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.radio input:checked {
+  /* Крапка всередині — градієнт, а не окремий елемент. */
+  background: radial-gradient(
+    circle,
+    var(--color-green) 0 8px,
+    var(--color-white) 9px
+  );
+}
+
+.radio label {
+  cursor: pointer;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field__label {
+  font-size: var(--text-small);
+}
+
+.field__input {
+  padding: 18px 30px;
+  background: var(--color-white);
+  border: var(--border);
+  border-radius: var(--radius-button);
+  color: var(--color-dark);
+  font-family: inherit;
+  font-size: var(--text-small);
+}
+
+.field__input::placeholder {
+  color: var(--color-muted);
+}
+
+.field__input--area {
+  resize: vertical;
+}
+
+/* --- Підвал --- */
+
+.site-footer {
+  padding-bottom: 0;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  padding: 55px 60px 30px;
+  background: var(--color-dark);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  color: var(--color-white);
+}
+
+.footer__top,
+.footer__middle,
+.footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.footer__middle {
+  align-items: flex-start;
+}
+
+.footer__nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.footer__nav a {
+  text-decoration: underline;
+  font-size: var(--text-small);
+  font-weight: 400;
+}
+
+/* --- Іконки соцмереж у підвалі --- */
+
+.socials {
+  display: flex;
+  gap: 20px; /* іконки 30px із кроком 50px у макеті */
+}
+
+.socials__link {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition: transform var(--transition);
+}
+
+.socials__link--linkedin {
+  background-image: url(assets/linkedin.svg);
+}
+
+.socials__link--facebook {
+  background-image: url(assets/facebook.svg);
+}
+
+.socials__link--twitter {
+  background-image: url(assets/twitter.svg);
+}
+
+.socials__link:hover {
+  transform: translateY(-3px);
+}
+
+.footer__contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  font-size: var(--text-small);
+}
+
+.footer__contacts .label {
+  align-self: flex-start;
+  margin-bottom: 12px;
+  font-size: var(--text-body);
+}
+
+.footer__subscribe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 58px 40px;
+  background: var(--color-dark-soft);
+  border-radius: var(--radius-button);
+}
+
+.footer__subscribe .field__input {
+  flex: 1;
+  min-width: 240px;
+  background: transparent;
+  border-color: var(--color-white);
+  color: var(--color-white);
+}
+
+.footer__bottom {
+  padding-top: 50px; /* у макеті лінія на 386px, текст на 436px */
+  border-top: 1px solid var(--color-white);
+  font-size: var(--text-small);
+}
+
+/* ==========================================================================
+   5. АДАПТИВНІСТЬ
+
+   Усі медіазапити зібрано в кінці файла, а не розкидано по секціях:
+   так видно всю поведінку сторінки на вузькому екрані в одному місці.
+   ========================================================================== */
+
+/* --- Планшет --- */
+@media (max-width: 992px) {
+  :root {
+    --text-h1: 43px;
+    --text-h2: 36px;
+    --text-h3: 26px;
+    --text-body: 18px;
+    --text-small: 16px;
+    --space-section: 90px;
+    --radius-card: 32px;
+  }
+
+  .site-header__inner {
+    gap: var(--space-sm);
+  }
+
+  .site-nav__list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  /*
+    Шапка лишається липкою й на вузькому екрані. Нижче за 860px меню їде
+    в шухляду і від шапки лишається логотип із бургером — це ~64px, тож 90px
+    вистачає з запасом. Але не нульовий: інакше заголовок секції, на яку
+    веде пункт меню, ховається під шапкою.
+
+    УВАГА: у смузі 861–992px меню ще горизонтальне, шапка ~107px і може
+    переноситися в два рядки — там 90px замало. Виправляти цей приклад
+    не будемо: спершу помітьте це самі на реальному екрані.
+  */
+  :target {
+    scroll-margin-top: 90px;
+  }
+
+  /* Титульний екран: спершу текст, потім ілюстрація. */
+  .hero__inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero__text {
+    max-width: none;
+  }
+
+  .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  /* Багатоколонкові блоки складаються в одну колонку. */
+  .services {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+  }
+
+  .cases {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    padding: 40px 30px;
+  }
+
+  /* Роздільник між кейсами стає горизонтальним. */
+  .case + .case {
+    padding: 40px 0 0;
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--color-white);
+  }
+
+  .cta,
+  .contact {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 30px;
+  }
+
+  .step {
+    padding: 30px;
+  }
+
+  .footer {
+    padding: 40px 30px 20px;
+  }
+
+  .footer__top,
+  .footer__middle,
+  .footer__bottom {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer__nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .footer__contacts {
+    align-items: center;
+  }
+
+  .footer__contacts .label {
+    align-self: center;
+  }
+}
+
+/* --- Бургер-меню й бічна шухляда --- */
+/*
+  Цей блок іде ПІСЛЯ планшетного, і порядок тут не випадковий.
+  На ширині 860px спрацьовують обидва медіазапити, специфічність
+  у селекторів однакова — тож перемагає той, що нижче у файлі.
+  Коли блок стояв вище, планшетне правило .site-nav__list перебивало
+  відступи шухляди й меню їхало.
+*/
+@media (max-width: 860px) {
+  /* Поки шухляда відкрита, сторінка під нею не прокручується. */
+  html:has(.burger-menu__checkbox:checked) {
+    overflow: hidden;
+  }
+
+  /* --- Кнопка-бургер --- */
+
+  .burger-menu__button {
+    display: flex;
+    /*
+      Ось у чому була вся біда: flex за замовчуванням шикує дітей У РЯД,
+      тож три смужки ставали трьома вертикальними рисочками поруч.
+      Бургер — це три смужки ОДНА ПІД ОДНОЮ, а це flex-direction: column.
+    */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    /* 44×44 — мінімальний розмір цілі, у яку впевнено влучає палець. */
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .burger-menu__button span {
+    display: block;
+    width: 28px;
+    height: 3px;
+    background: var(--color-dark);
+    border-radius: 2px;
+  }
+
+  /*
+    Сам чекбокс невидимий, тому обведення фокуса показуємо на видимих
+    кнопках: на бургері, коли меню закрите, і на хрестику, коли відкрите.
+  */
+  .burger-menu__checkbox:focus-visible ~ .burger-menu__button,
+  .burger-menu__checkbox:focus-visible ~ .site-nav .burger-menu__close {
+    outline: 3px solid var(--color-dark);
+    outline-offset: 3px;
+  }
+
+  /* --- Затемнення позаду шухляди --- */
+
+  .burger-menu__overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(25, 26, 35, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--transition),
+      visibility var(--transition);
+    z-index: 24;
+    cursor: pointer;
+  }
+
+  .burger-menu__checkbox:checked ~ .burger-menu__overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* --- Шухляда --- */
+
+  .site-nav {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(360px, 86vw);
+    background: var(--color-white);
+    border-left: var(--border);
+    overflow-y: auto;
+    z-index: 25;
+    /*
+      Зачинена шухляда стоїть за правим краєм вікна. visibility: hidden
+      додано НЕ для вигляду: без нього посилання всередині лишаються
+      у Tab-порядку, і клавіатура провалюється в невидиме меню.
+      Тому visibility теж у transition — щоб вона перемикалася
+      наприкінці анімації, а не миттєво.
+    */
+    transform: translateX(100%);
+    visibility: hidden;
+    transition:
+      transform var(--transition),
+      visibility var(--transition);
+  }
+
+  .burger-menu__checkbox:checked ~ .site-nav {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  /* --- Хрестик, що закриває шухляду --- */
+  /*
+    Хрестик — це дві лінії, які ПЕРЕТИНАЮТЬСЯ в одній точці, а не дві
+    смужки одна під одною. Тому обидві абсолютні й обидві зсунуті
+    в центр кнопки через translate(-50%, -50%), і вже потім повернуті.
+    Порядок у transform має значення: спершу зсув, далі поворот.
+  */
+  .burger-menu__close {
+    display: block;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    margin: 18px 20px 0 auto;
+    border: var(--border);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color var(--transition);
+  }
+
+  .burger-menu__close::before,
+  .burger-menu__close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 3px;
+    background: var(--color-dark);
+    border-radius: 2px;
+  }
+
+  .burger-menu__close::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .burger-menu__close::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  .burger-menu__close:hover {
+    background: var(--color-green);
+  }
+
+  /* --- Пункти меню в шухляді --- */
+
+  .site-nav__list {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: var(--space-md) 20px var(--space-lg);
+  }
+
+  .site-nav__link {
+    font-size: var(--text-h3);
+  }
+
+  .site-nav__list li:last-child {
+    margin-top: var(--space-xs);
+  }
+
+  .site-nav__list .button {
+    display: block;
+    padding: var(--space-xs) var(--space-sm);
+  }
+}
+
+/* --- Телефон --- */
+@media (max-width: 560px) {
+  :root {
+    --text-h1: 36px;
+    --space-lg: 30px;
+  }
+
+  .service {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .service__text {
+    gap: var(--space-md);
+  }
+
+  .service__art {
+    width: 100%;
+  }
+
+  /*
+    Рядок акордеона — номер + назва + кружечок. На 320px ці три речі
+    перестають вміщатися, тому зменшуємо все й дозволяємо назві стискатися.
+    min-width: 0 обов'язковий: без нього flex-елемент не звужується вужче
+    за найдовше слово («Optimization») і виштовхує кружечок за екран.
+  */
+  .step {
+    padding: 24px 20px;
+  }
+
+  .step__head {
+    gap: 12px;
+  }
+
+  .step__number {
+    font-size: 30px;
+  }
+
+  .step__title {
+    min-width: 0;
+    font-size: 20px;
+    overflow-wrap: break-word;
+  }
+
+  .step__toggle {
+    width: 40px;
+    height: 40px;
+  }
+
+  /*
+    Ліворуч від імені лишається замало місця — зменшуємо фото.
+    Розмір задає ОБГОРТКА, а не саме фото: фото і темна фігура позаду
+    міряються від неї (100%), тож обидві частини зменшуються разом.
+    Якби розмір стояв на .person__photo, фото стало б менше за свою
+    ж підкладку — і зсув із макета перетворився б на кособокий обідок.
+  */
+  .person__photo-wrapper {
+    width: 72px;
+    height: 72px;
+  }
+
+  .person__head {
+    padding-right: 38px;
+  }
+
+  .person__social {
+    top: 25px;
+    right: 20px;
+  }
+
+  .person {
+    padding: 30px 25px;
+  }
+
+  .footer {
+    padding: 30px 20px 20px;
+  }
+
+  .footer__subscribe {
+    padding: 25px 20px;
+  }
+
+  /*
+    min-width: 240px на полі розсилки — це саме те, через що на 320px
+    з'являлася горизонтальна прокрутка: 240 + падінги підвалу давали 340px.
+    Але просто зняти обмеження мало: поле стискалося до 55px, бо кнопка
+    поруч забирала всю ширину. Тому на телефоні форма стає стовпчиком —
+    поле й кнопка на всю ширину, кожне у своєму рядку.
+  */
+  .footer__subscribe {
+    flex-direction: column;
+  }
+
+  .footer__subscribe .field__input {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .footer__subscribe .button {
+    width: 100%;
+  }
+
+  .field__input {
+    padding: 14px 18px;
+  }
+}

@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Positivus — digital marketing agency. SEO, PPC, social media, and content creation for your business growth."
+    />
+    <title>Positivus — Digital Marketing Agency</title>
+
+    <!--
+      Іконка вкладки. Два формати, бо вони покривають різні браузери:
+      SVG масштабується під будь-яку щільність екрана, а .ico лишається
+      для старих, які SVG в іконці не розуміють. Браузер сам бере той
+      формат, який уміє.
+    -->
+    <link rel="icon" href="assets/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Два шрифти, і це не примха. Space Grotesk із макета НЕ МАЄ кирилиці.
+      Текст сторінки англійський, тож усе малюється ним, а Onest поруч —
+      страховка: браузер підбирає шрифт для кожного гліфа окремо, тож щойно
+      в тексті з'явиться кирилиця, вона дістанеться Onest, а не системному
+      шрифту навмання. Порядок у font-family вирішує все; докладніше — у README.
+    -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&amp;family=Onest:wght@400;500&amp;display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="logo" href="#main" aria-label="Positivus — Home">
+          <img class="logo__mark" src="assets/logo.svg" alt="Logo" />
+        </a>
+
+        <!--
+          Меню без JavaScript тримається на одному чекбоксі: він зберігає
+          стан «відкрито/закрито», а <label for="burger-menu"> працює кнопкою.
+          Таких лейблів три, і всі вони перемикають той самий чекбокс:
+          бургер у шапці, затемнення позаду шухляди й хрестик усередині неї.
+
+          Чекбокс НЕ прихований через display: none — так він зник би і з
+          клавіатури, і з читалки. Він візуально прихований, але фокусується,
+          тож меню відкривається пробілом. Через це на ньому aria-label,
+          а не aria-hidden.
+        -->
+        <input
+          type="checkbox"
+          id="burger-menu"
+          class="burger-menu__checkbox"
+          aria-label="Toggle navigation menu"
+        />
+        <label for="burger-menu" class="burger-menu__button" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
+        <label for="burger-menu" class="burger-menu__overlay" aria-hidden="true"></label>
+
+        <nav class="site-nav" aria-label="Main navigation">
+          <label for="burger-menu" class="burger-menu__close" aria-hidden="true"></label>
+
+          <ul class="site-nav__list">
+            <li><a class="site-nav__link" href="#services">Services</a></li>
+            <li><a class="site-nav__link" href="#cases">Use Cases</a></li>
+            <li><a class="site-nav__link" href="#process">Process</a></li>
+            <li><a class="site-nav__link" href="#team">Team</a></li>
+            <li>
+              <a class="button button--outline" href="#contact"
+                >Request a quote</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- Hero Section -->
+      <section class="section hero">
+        <div class="container hero__inner">
+          <div class="hero__text">
+            <h1 class="hero__title">Navigating the digital landscape for success</h1>
+            <p class="hero__lead">
+              Our digital marketing agency helps businesses grow and succeed online through a range of services including SEO, PPC, social media marketing, and content creation.
+            </p>
+            <a class="button button--primary" href="#contact"
+              >Book a consultation</a
+            >
+          </div>
+
+          <div class="hero__art" aria-hidden="true">
+            <img src="assets/hero.svg" alt="Hero illustration" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Clients Section -->
+      <section class="section logos">
+        <h2 class="visually-hidden">Trusted by leading companies</h2>
+        <ul class="container logos__list">
+          <li class="logos__item">
+            <img src="assets/amazon.svg" alt="Amazon" />
+          </li>
+          <li class="logos__item">
+            <img src="assets/dribbble.svg" alt="Dribbble" />
+          </li>
+          <li class="logos__item">
+            <img src="assets/hubspot.svg" alt="HubSpot" />
+          </li>
+          <li class="logos__item">
+            <img src="assets/notion.svg" alt="Notion" />
+          </li>
+          <li class="logos__item">
+            <img src="assets/netflix.svg" alt="Netflix" />
+          </li>
+          <li class="logos__item">
+            <img src="assets/zoom.svg" alt="Zoom" />
+          </li>
+        </ul>
+      </section>
+
+      <!-- Services Section -->
+      <section class="section" id="services">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-head__title">
+              <span class="label">Services</span>
+            </h2>
+            <p class="section-head__text">
+              At our digital marketing agency, we offer a range of services to help businesses grow and succeed online. These services include:
+            </p>
+          </div>
+
+          <ul class="services">
+            <li class="card service">
+              <div class="service__text">
+                <h3 class="service__title">
+                  <span class="label">Search engine</span
+                  ><span class="label">optimization</span>
+                </h3>
+                <a class="link-arrow" href="#contact">
+                  <span class="link-arrow__icon" aria-hidden="true">↗</span>
+                  Learn more
+                </a>
+              </div>
+              <img
+                class="service__art"
+                src="assets/service-1.png"
+                alt="Service Search Optimization"
+              />
+            </li>
+
+            <li class="card card--green service">
+              <div class="service__text">
+                <h3 class="service__title">
+                  <span class="label label--light">Pay-per-click</span
+                  ><span class="label label--light">advertising</span>
+                </h3>
+                <a class="link-arrow" href="#contact">
+                  <span class="link-arrow__icon" aria-hidden="true">↗</span>
+                  Learn more
+                </a>
+              </div>
+              <img
+                class="service__art"
+                src="assets/service-2.png"
+                alt="Service Contextual Advertising"
+              />
+            </li>
+
+            <li class="card card--dark service">
+              <div class="service__text">
+                <h3 class="service__title">
+                  <span class="label label--light">Social Media</span
+                  ><span class="label label--light">Marketing</span>
+                </h3>
+                <a class="link-arrow link-arrow--light" href="#contact">
+                  <span class="link-arrow__icon" aria-hidden="true">↗</span>
+                  Learn more
+                </a>
+              </div>
+              <img
+                class="service__art"
+                src="assets/service-3.png"
+                alt="Service Social Media Marketing"
+              />
+            </li>
+
+            <li class="card service">
+              <div class="service__text">
+                <h3 class="service__title">
+                  <span class="label">Email</span
+                  ><span class="label">Marketing</span>
+                </h3>
+                <a class="link-arrow" href="#contact">
+                  <span class="link-arrow__icon" aria-hidden="true">↗</span>
+                  Learn more
+                </a>
+              </div>
+              <img
+                class="service__art"
+                src="assets/service-4.png"
+                alt="Service Email Marketing"
+              />
+            </li>
+
+            <li class="card card--green service">
+              <div class="service__text">
+                <h3 class="service__title">
+                  <span class="label label--light">Content</span
+                  ><span class="label label--light">Creation</span>
+                </h3>
+                <a class="link-arrow" href="#contact">
+                  <span class="link-arrow__icon" aria-hidden="true">↗</span>
+                  Learn more
+                </a>
+              </div>
+              <img
+                class="service__art"
+                src="assets/service-5.png"
+                alt="Service Content Creation"
+              />
+            </li>
+
+            <li class="card card--dark service">
+              <div class="service__text">
+                <h3 class="service__title">
+                  <span class="label">Analytics and</span
+                  ><span class="label">Tracking</span>
+                </h3>
+                <a class="link-arrow link-arrow--light" href="#contact">
+                  <span class="link-arrow__icon" aria-hidden="true">↗</span>
+                  Learn more
+                </a>
+              </div>
+              <img
+                class="service__art"
+                src="assets/service-6.png"
+                alt="Service Analytics and Reports"
+              />
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="section">
+        <div class="container">
+          <div class="cta">
+            <div class="cta__text">
+              <h2 class="cta__title">Let's make things happen</h2>
+              <p>
+                Contact us today to learn more about how our digital marketing services can help your business grow and succeed online.
+              </p>
+              <a class="button button--primary cta__button" href="#contact">Get your free proposal</a>
+            </div>
+            <div class="cta__art" aria-hidden="true">
+              <img src="assets/happened.svg" alt="Text Us Illustration" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Case Studies Section -->
+      <section class="section" id="cases">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-head__title">
+              <span class="label">Case Studies</span>
+            </h2>
+            <p class="section-head__text">
+              Explore Real-Life Examples of Our Proven Digital Marketing Success through Our Case Studies
+            </p>
+          </div>
+
+          <ul class="cases">
+            <li class="case">
+              <p class="case__text">
+                For a local restaurant, we implemented a targeted PPC campaign that resulted in a 50% increase in website traffic and a 25% increase in sales.
+              </p>
+              <a class="link-arrow link-arrow--green" href="#contact">
+                Learn more
+                <span class="link-arrow__icon" aria-hidden="true">↗</span>
+              </a>
+            </li>
+            <li class="case">
+              <p class="case__text">
+                For a B2B software company, we developed an SEO strategy that resulted in a first page ranking for key keywords and a 200% increase in organic traffic.
+              </p>
+              <a class="link-arrow link-arrow--green" href="#contact">
+                Learn more
+                <span class="link-arrow__icon" aria-hidden="true">↗</span>
+              </a>
+            </li>
+            <li class="case">
+              <p class="case__text">
+                For a national retail chain, we created a social media marketing campaign that increased followers by 25% and generated a 20% increase in online sales.
+              </p>
+              <a class="link-arrow link-arrow--green" href="#contact">
+                Learn more
+                <span class="link-arrow__icon" aria-hidden="true">↗</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Process Section -->
+      <section class="section" id="process">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-head__title">
+              <span class="label">Our Working Process</span>
+            </h2>
+            <p class="section-head__text">
+              Step-by-Step Guide to Achieving Your Business Goals
+            </p>
+          </div>
+
+          <!--
+            Акордеон зроблено на <details>/<summary> — це чистий HTML,
+            без жодного рядка JavaScript (а він у цьому бою заборонений).
+            Браузер сам відкриває й закриває блок, сам керує ним із клавіатури
+            й сам повідомляє читалці, розгорнуто пункт чи згорнуто.
+
+            Атрибут open на першому пункті — початковий стан із макета.
+          -->
+          <ul class="process">
+            <li>
+              <details class="card step" open>
+                <summary class="step__head">
+                  <span class="step__number">01</span>
+                  <span class="step__title">Consultation</span>
+                  <span class="step__toggle" aria-hidden="true"></span>
+                </summary>
+                <p class="step__text">
+                  During the initial consultation, we will discuss your business goals and objectives, target audience, and current marketing efforts. This will allow us to understand your needs and tailor our services to best fit your requirements.
+                </p>
+              </details>
+            </li>
+            <li>
+              <details class="card step">
+                <summary class="step__head">
+                  <span class="step__number">02</span>
+                  <span class="step__title">Research and Strategy Development</span>
+                  <span class="step__toggle" aria-hidden="true"></span>
+                </summary>
+                <p class="step__text">
+                  We analyze market trends, competitor strategies, and audience insights to develop a tailored marketing strategy that aligns with your business goals.
+                </p>
+              </details>
+            </li>
+            <li>
+              <details class="card step">
+                <summary class="step__head">
+                  <span class="step__number">03</span>
+                  <span class="step__title">Implementation</span>
+                  <span class="step__toggle" aria-hidden="true"></span>
+                </summary>
+                <p class="step__text">
+                  Our team executes the strategy across all selected channels, creating compelling content and launching campaigns to reach your target audience effectively.
+                </p>
+              </details>
+            </li>
+            <li>
+              <details class="card step">
+                <summary class="step__head">
+                  <span class="step__number">04</span>
+                  <span class="step__title">Monitoring and Optimization</span>
+                  <span class="step__toggle" aria-hidden="true"></span>
+                </summary>
+                <p class="step__text">
+                  We continuously monitor campaign performance and make data-driven adjustments to optimize results and maximize ROI.
+                </p>
+              </details>
+            </li>
+            <li>
+              <details class="card step">
+                <summary class="step__head">
+                  <span class="step__number">05</span>
+                  <span class="step__title">Reporting and Communication</span>
+                  <span class="step__toggle" aria-hidden="true"></span>
+                </summary>
+                <p class="step__text">
+                  We provide regular, comprehensive reports detailing performance metrics, insights, and recommendations for ongoing improvements.
+                </p>
+              </details>
+            </li>
+            <li>
+              <details class="card step">
+                <summary class="step__head">
+                  <span class="step__number">06</span>
+                  <span class="step__title">Continual Improvement</span>
+                  <span class="step__toggle" aria-hidden="true"></span>
+                </summary>
+                <p class="step__text">
+                  We're committed to staying ahead of industry trends and continuously refining our strategies to deliver sustainable growth.
+                </p>
+              </details>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Team Section -->
+      <section class="section" id="team">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-head__title">
+              <span class="label">Team</span>
+            </h2>
+            <p class="section-head__text">
+              Meet the skilled and experienced team behind our successful digital marketing strategies
+            </p>
+          </div>
+
+          <ul class="team">
+            <li class="card person">
+              <div class="person__head">
+                <div class="person__photo-wrapper">
+                  <div class="person__photo"></div>
+                </div>
+                <div>
+                  <h3 class="person__name">John Smith</h3>
+                  <p class="person__role">CEO and Founder</p>
+                </div>
+                <a
+                  class="person__social"
+                  href="#main"
+                  aria-label="John Smith on LinkedIn"
+                ></a>
+              </div>
+              <p class="person__bio">
+                10+ years of experience in digital marketing. Expertise in SEO, PPC, and content strategy
+              </p>
+            </li>
+            <li class="card person">
+              <div class="person__head">
+                <div class="person__photo-wrapper">
+                  <div class="person__photo"></div>
+                </div>
+                <div>
+                  <h3 class="person__name">Jane Doe</h3>
+                  <p class="person__role">Director of Operations</p>
+                </div>
+                <a
+                  class="person__social"
+                  href="#main"
+                  aria-label="Jane Doe on LinkedIn"
+                ></a>
+              </div>
+              <p class="person__bio">
+                7+ years of experience in project management and team leadership. Strong organizational and communication skills
+              </p>
+            </li>
+            <li class="card person">
+              <div class="person__head">
+                <div class="person__photo-wrapper">
+                  <div class="person__photo"></div>
+                </div>
+                <div>
+                  <h3 class="person__name">Michael Brown</h3>
+                  <p class="person__role">Senior SEO Specialist</p>
+                </div>
+                <a
+                  class="person__social"
+                  href="#main"
+                  aria-label="Michael Brown on LinkedIn"
+                ></a>
+              </div>
+              <p class="person__bio">
+                5+ years of experience in SEO and content creation. Proficient in keyword research and on-page optimization
+              </p>
+            </li>
+            <li class="card person">
+              <div class="person__head">
+                <div class="person__photo-wrapper">
+                  <div class="person__photo"></div>
+                </div>
+                <div>
+                  <h3 class="person__name">Emily Johnson</h3>
+                  <p class="person__role">PPC Manager</p>
+                </div>
+                <a
+                  class="person__social"
+                  href="#main"
+                  aria-label="Emily Johnson on LinkedIn"
+                ></a>
+              </div>
+              <p class="person__bio">
+                3+ years of experience in paid search advertising. Skilled in campaign management and performance analysis
+              </p>
+            </li>
+            <li class="card person">
+              <div class="person__head">
+                <div class="person__photo-wrapper">
+                  <div class="person__photo"></div>
+                </div>
+                <div>
+                  <h3 class="person__name">Brian Williams</h3>
+                  <p class="person__role">Social Media Specialist</p>
+                </div>
+                <a
+                  class="person__social"
+                  href="#main"
+                  aria-label="Brian Williams on LinkedIn"
+                ></a>
+              </div>
+              <p class="person__bio">
+                4+ years of experience in social media marketing. Proficient in creating and scheduling content, analyzing metrics, and building engagement
+              </p>
+            </li>
+            <li class="card person">
+              <div class="person__head">
+                <div class="person__photo-wrapper">
+                  <div class="person__photo"></div>
+                </div>
+                <div>
+                  <h3 class="person__name">Sarah Kim</h3>
+                  <p class="person__role">Content Creator</p>
+                </div>
+                <a
+                  class="person__social"
+                  href="#main"
+                  aria-label="Sarah Kim on LinkedIn"
+                ></a>
+              </div>
+              <p class="person__bio">
+                2+ years of experience in writing and editing. Skilled in creating compelling, SEO-optimized content for various industries
+              </p>
+            </li>
+          </ul>
+
+          <p class="team__more">
+            <a class="button button--primary" href="#contact">See all team</a>
+          </p>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section class="section" id="contact">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-head__title">
+              <span class="label">Contact Us</span>
+            </h2>
+            <p class="section-head__text">
+              Connect with Us: Let's Discuss Your Digital Marketing Needs
+            </p>
+          </div>
+
+          <div class="contact">
+            <form class="contact__form" action="#" method="post">
+              <fieldset class="contact__purpose">
+                <legend class="contact__legend">Say Hi</legend>
+
+                <p class="radio">
+                  <input
+                    type="radio"
+                    id="purpose-hi"
+                    name="purpose"
+                    value="hi"
+                    checked
+                  />
+                  <label for="purpose-hi">Say Hi</label>
+                </p>
+                <p class="radio">
+                  <input
+                    type="radio"
+                    id="purpose-quote"
+                    name="purpose"
+                    value="quote"
+                  />
+                  <label for="purpose-quote">Get a Quote</label>
+                </p>
+              </fieldset>
+
+              <p class="field">
+                <label class="field__label" for="name">Name</label>
+                <input
+                  class="field__input"
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Name"
+                  autocomplete="name"
+                />
+              </p>
+
+              <p class="field">
+                <label class="field__label" for="email">Email*</label>
+                <input
+                  class="field__input"
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Email"
+                  autocomplete="email"
+                  required
+                />
+              </p>
+
+              <p class="field">
+                <label class="field__label" for="message">Message*</label>
+                <textarea
+                  class="field__input field__input--area"
+                  id="message"
+                  name="message"
+                  rows="6"
+                  placeholder="Message"
+                  required
+                ></textarea>
+              </p>
+
+              <button
+                class="button button--primary button--block"
+                type="submit"
+              >
+                Send Message
+              </button>
+            </form>
+
+            <div class="contact__art" aria-hidden="true">
+              <img src="assets/form.svg" alt="Contact Illustration" />
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer">
+          <div class="footer__top">
+            <a class="logo logo--light" href="#main">
+              <img class="logo__mark" src="assets/logo-light.svg" alt="Logo" />
+            </a>
+
+            <nav class="footer__nav" aria-label="Footer navigation">
+              <ul>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#cases">Use Cases</a></li>
+                <li><a href="#process">Process</a></li>
+                <li><a href="#team">Team</a></li>
+                <li><a href="#contact">Contact</a></li>
+              </ul>
+            </nav>
+
+            <!--
+              Іконки соцмереж — посилання, а не картинки. Тексту в них немає,
+              тому підпис для читалки дає aria-label, а сама іконка
+              позначена aria-hidden.
+            -->
+            <ul class="socials">
+              <li>
+                <a
+                  class="socials__link socials__link--linkedin"
+                  href="#main"
+                  aria-label="Positivus on LinkedIn"
+                ></a>
+              </li>
+              <li>
+                <a
+                  class="socials__link socials__link--facebook"
+                  href="#main"
+                  aria-label="Positivus on Facebook"
+                ></a>
+              </li>
+              <li>
+                <a
+                  class="socials__link socials__link--twitter"
+                  href="#main"
+                  aria-label="Positivus on X (Twitter)"
+                ></a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="footer__middle">
+            <div class="footer__contacts">
+              <h2 class="label">Contact us:</h2>
+              <p>
+                Email: <a href="mailto:info@positivus.com">info@positivus.com</a>
+              </p>
+              <p>
+                Phone: <a href="tel:+15555678901">555-567-8901</a>
+              </p>
+              <p>Address: 1234 Main St</p>
+              <p>Moonstone City, Stardust State 12345</p>
+            </div>
+
+            <form class="footer__subscribe" action="#" method="post">
+              <label class="visually-hidden" for="subscribe-email">
+                Subscribe to news
+              </label>
+              <input
+                class="field__input"
+                type="email"
+                id="subscribe-email"
+                name="subscribe-email"
+                placeholder="Enter your email"
+                required
+              />
+              <button class="button button--green" type="submit">
+                Subscribe
+              </button>
+            </form>
+          </div>
+
+          <div class="footer__bottom">
+            <p>
+              &copy;
+              <time datetime="2023">2023</time>
+              Positivus. All Rights Reserved.
+            </p>
+            <p><a href="#main">Privacy Policy</a></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
